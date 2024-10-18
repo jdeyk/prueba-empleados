@@ -43,9 +43,7 @@ class EditEmployee extends StatelessWidget {
 
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      HomePage()), // Asegúrate de importar tu HomePage
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
           } catch (error) {
             ScaffoldMessenger.of(context).showSnackBar(

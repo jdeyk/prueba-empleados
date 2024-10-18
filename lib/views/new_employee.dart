@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/main.dart';
 import 'forms/form_employee.dart'; // Importa el formulario reutilizable
 import '../services/api_service.dart';
 
@@ -41,8 +42,10 @@ class NewEmployee extends StatelessWidget {
         isActivo: isActivo,
         departamentoId: departamentoId,
       );
-      Navigator.pop(
-          context); // Regresa a la pantalla anterior después de guardar
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } catch (error) {
       print('Error: $error');
       ScaffoldMessenger.of(context).showSnackBar(

@@ -84,7 +84,6 @@ class _CreateEmployeeState extends State<CreateEmployee> {
         title: Text('Create Employee'),
       ),
       body: SingleChildScrollView(
-        // Permite el desplazamiento si hay overflow
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -179,8 +178,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
-                      _selectedDepartmentId =
-                          value; // Almacena el ID seleccionado
+                      _selectedDepartmentId = value;
                     });
                   },
                   validator: (value) {
@@ -200,7 +198,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                       value: _isActivo,
                       onChanged: (value) {
                         setState(() {
-                          _isActivo = value ?? false; // Actualiza el estado
+                          _isActivo = value ?? false;
                         });
                       },
                     ),
@@ -211,14 +209,11 @@ class _CreateEmployeeState extends State<CreateEmployee> {
 
                 // Botón de guardar
                 SizedBox(
-                  width: double
-                      .infinity, // Asegura que el botón ocupe todo el ancho
+                  width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16.0), // Añade un padding vertical
-                      textStyle: const TextStyle(
-                          fontSize: 18), // Aumenta el tamaño del texto
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      textStyle: const TextStyle(fontSize: 18),
                     ),
                     onPressed: _saveEmployee,
                     child: const Text('Guardar'),

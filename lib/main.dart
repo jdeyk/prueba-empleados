@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         _errorMessage = 'Por favor, ingresa un ID de empleado.';
         _employee = null;
       });
-      return; // Salir de la función si el ID está vacío
+      return;
     }
 
     setState(() {
@@ -357,12 +357,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ] else if (_errorMessage.isNotEmpty) ...[
-                // Text(
-                //   _errorMessage,
-                //   style: const TextStyle(color: Colors.red),
-                // ),
-              ],
+              ] else if (_errorMessage.isNotEmpty)
+                ...[],
             ],
           ),
         ),
