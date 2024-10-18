@@ -1,40 +1,33 @@
+import 'package:prueba/models/departament.dart';
+
 class Employee {
   final int id;
   final String fullname;
-  final DateTime fechaNacimiento; // Cambiado a DateTime
   final String correo;
+  final DateTime fechaNacimiento;
   final int isActivo;
-  final int departamentoId;
+  final int departamentoId; // ID del departamento
+  final Department departamento; // Información completa del departamento
 
   Employee({
     required this.id,
     required this.fullname,
-    required this.fechaNacimiento,
     required this.correo,
+    required this.fechaNacimiento,
     required this.isActivo,
     required this.departamentoId,
+    required this.departamento,
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) {
     return Employee(
       id: json['id'],
       fullname: json['fullname'],
-      fechaNacimiento:
-          DateTime.parse(json['fecha_nacimiento']),
       correo: json['correo'],
+      fechaNacimiento: DateTime.parse(json['fecha_nacimiento']),
       isActivo: json['isActivo'],
       departamentoId: json['departamento_id'],
+      departamento: Department.fromJson(json['departamento']),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'fullname': fullname,
-      'fecha_nacimiento': fechaNacimiento.toIso8601String(),
-      'correo': correo,
-      'isActivo': isActivo,
-      'departamento_id': departamentoId,
-    };
   }
 }

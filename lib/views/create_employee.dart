@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/main.dart';
 import '../models/departament.dart';
 import '../services/api_service.dart';
 
@@ -58,9 +59,11 @@ class _CreateEmployeeState extends State<CreateEmployee> {
           isActivo: _isActivo,
           departamentoId: _selectedDepartmentId!,
         );
-        Navigator.pop(context); // Regresar a la pantalla anterior
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       } catch (error) {
-        // Manejo de errores
         print('Error: $error');
       }
     }

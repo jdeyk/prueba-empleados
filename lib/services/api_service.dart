@@ -63,6 +63,27 @@ class ApiService {
     }
   }
 
+  Future<void> updateEmployee(String id, String fullname, String correo,
+      String fechaNacimiento, int isActivo, int departamentoId) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/empleados/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'fullname': fullname,
+        'correo': correo,
+        'fecha_nacimiento': fechaNacimiento,
+        'isActivo': isActivo,
+        'departamento_id': departamentoId,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar el empleado');
+    }
+  }
+
   Future<void> deleteEmployee(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/empleados/$id'));
 

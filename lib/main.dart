@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:prueba/models/departament.dart';
-
+import 'package:prueba/views/edit_employee.dart';
+import 'package:prueba/views/new_employee.dart';
 import 'services/api_service.dart';
 import 'models/employee.dart';
-import 'views/create_employee.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,14 +48,22 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
   final ApiService _apiService = ApiService();
   Employee? _employee;
-  List<Department> _departamentos = [];
+
   String _errorMessage = '';
 
   Future<void> _searchEmployee(String id) async {
+    // Verificar si el id está vacío
+    if (id.isEmpty) {
+      setState(() {
+        _errorMessage = 'Por favor, ingresa un ID de empleado.';
+        _employee = null;
+      });
+      return; // Salir de la función si el ID está vacío
+    }
+
     setState(() {
       _errorMessage = '';
       _employee = null;
-      _loadDepartamentos();
     });
 
     try {
@@ -65,9 +72,17 @@ class _HomePageState extends State<HomePage> {
         _employee = employee;
       });
     } catch (error) {
-      setState(() {
-        _errorMessage = error.toString();
-      });
+      if (error.toString().contains("Empleado no encontrado")) {
+        setState(() {
+          _errorMessage = 'Sin resultados de la búsqueda';
+          _employee = null;
+        });
+      } else {
+        setState(() {
+          _errorMessage = error.toString();
+          _employee = null;
+        });
+      }
 
       showDialog(
         context: context,
@@ -89,29 +104,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _loadDepartamentos() async {
-    try {
-      final departamentos = await _apiService.fetchDepartments();
-      setState(() {
-        _departamentos = departamentos;
-      });
-    } catch (error) {
-      setState(() {
-        _errorMessage = error.toString();
-      });
-    }
-  }
-
-  String _getDepartmentName(int id) {
-    final departamento = _departamentos.firstWhere(
-      (dept) => dept.id == id,
-      orElse: () => Department(id: 0, name: 'Desconocido'),
-    );
-    return departamento.name;
-  }
-
-  void _editEmployee() {
-    // Lógica para editar el empleado
+  String _getDepartmentName() {
+    return _employee?.departamento.name ?? 'Desconocido';
   }
 
   void _deleteEmployee(String id) async {
@@ -291,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Departamento: ${_getDepartmentName(_employee!.departamentoId)}',
+                          'Departamento: ${_getDepartmentName()}',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 16),
@@ -299,7 +293,25 @@ class _HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ElevatedButton(
-                              onPressed: _editEmployee,
+                              onPressed: () async {
+                                if (_employee != null) {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditEmployee(employee: _employee!),
+                                    ),
+                                  );
+
+                                  if (result == true) {
+                                    setState(() {
+                                      _employee = null;
+                                      _controller.clear();
+                                    });
+                                  }
+                                  _controller.clear();
+                                }
+                              },
                               child: const Text('Editar'),
                             ),
                             ElevatedButton(
@@ -307,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                                 if (_employee != null) {
                                   _deleteEmployee(
                                     _employee!.id.toString(),
-                                  ); // Convierte el ID a String
+                                  );
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -326,20 +338,52 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+              ] else if (_errorMessage.contains("Empleado no encontrado")) ...[
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Sin resultados de la búsqueda',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+              ] else if (_errorMessage.isNotEmpty) ...[
+                // Text(
+                //   _errorMessage,
+                //   style: const TextStyle(color: Colors.red),
+                // ),
               ],
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CreateEmployee()),
+            MaterialPageRoute(
+              builder: (context) => const NewEmployee(),
+            ),
           );
+
+          if (result == true) {
+            setState(() {
+              _employee = null;
+              _controller.clear();
+            });
+          }
         },
         child: const Icon(Icons.add),
-        backgroundColor: Colors.redAccent,
       ),
     );
   }
